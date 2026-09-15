@@ -1,7 +1,11 @@
-import express from "express";
+﻿import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+
+// Initialise DB (creates tables + seeds demo user) on first boot
+import "./db/database.js";
+import { authRouter } from "./routes/auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,23 +14,31 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Serve static files from dist/public in production
-  const staticPath =
+  app.use(express.json());
+
+  // ── API routes — registered before the static/SPA catch-all ──
+  app.use("/api/auth", authRouter);
+
+  // ── Static + SPA (production only; dev uses Vite with proxy) ──
+  if (process.env.NODE_ENV === "production") {
+    const staticPath = path.resolve(__dirname, "public");
+    app.use(express.static(staticPath));
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(staticPath, "index.html"));
+    });
+  }
+
+  // In dev the Express server runs on 3001; Vite on 3000 proxies /api to here.
+  // In production NODE_ENV=production so PORT is the only var needed.
+  const port =
     process.env.NODE_ENV === "production"
-      ? path.resolve(__dirname, "public")
-      : path.resolve(__dirname, "..", "dist", "public");
-
-  app.use(express.static(staticPath));
-
-  // Handle client-side routing - serve index.html for all routes
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
-  });
-
-  const port = process.env.PORT || 3000;
+      ? Number(process.env.PORT ?? 3000)
+      : 3001;
 
   server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
+    console.log(
+      `[server] ${process.env.NODE_ENV === "production" ? "Production" : "API"} server on http://localhost:${port}/`
+    );
   });
 }
 
