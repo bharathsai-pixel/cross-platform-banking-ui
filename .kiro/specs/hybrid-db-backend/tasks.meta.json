@@ -1,0 +1,349 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Install production dependencies: `sequelize`, `mysql2`, `mongoose`, `uuid`, `decimal.js`, `nanoid`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551237451
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551258130
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551634972
+      }
+    ],
+    "1.2 Install dev/type dependencies: `@types/uuid`, `sequelize-typescript`, `fast-check`, `@types/node`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551237670
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551259062
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551635918
+      }
+    ],
+    "1.3 Update `.env.example` with all new environment variables": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551237789
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551259377
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551636288
+      }
+    ],
+    "2.1 Create `server/config/env.ts` — startup environment validation module": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551237921
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551647727
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551786194
+      }
+    ],
+    "3.1 Create `server/db/mysql.ts` — Sequelize connection pool and `initMySQL()`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551238084
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551798396
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552585013
+      }
+    ],
+    "4.1 Create `server/db/migrations/001_initial_schema.sql`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551238302
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551648065
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551786976
+      }
+    ],
+    "5.1 Create `server/db/models/User.ts` — Sequelize User model": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551238439
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552608378
+      }
+    ],
+    "5.2 Create `server/db/models/Account.ts` — Sequelize Account model with optimistic lock": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551238608
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552609147
+      }
+    ],
+    "5.3 Create `server/db/models/Transaction.ts` — append-only Sequelize Transaction model": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551238742
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552610336
+      }
+    ],
+    "6.1 Create `server/db/mongodb.ts` — Mongoose connection and `initMongoDB()`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551238893
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552611301
+      }
+    ],
+    "7.1 Create `server/db/mongo-models/DeviceSession.ts` — DeviceSession schema with TTL index": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551239040
+      },
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552611952
+      }
+    ],
+    "7.2 Create `server/db/mongo-models/AuditLog.ts` — append-only AuditLog schema": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551239195
+      }
+    ],
+    "7.3 Create `server/db/mongo-models/GatewayPayload.ts` — GatewayPayload schema": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551239352
+      }
+    ],
+    "8. Checkpoint — Database layer complete": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551239515
+      }
+    ],
+    "9.1 Create `server/services/audit.service.ts` — `appendAudit()` with in-process retry queue": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551239674
+      }
+    ],
+    "10.1 Create `server/services/transfer.service.ts` — atomic transfer with optimistic lock retry": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551239838
+      }
+    ],
+    "11.1 Create `server/routes/transactions.ts` — `POST /api/transactions/transfer`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551240464
+      }
+    ],
+    "12.1 Create `server/routes/sessions.ts` — DeviceSession CRUD endpoints": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551240652
+      }
+    ],
+    "13.1 Create `server/routes/health.ts` — `GET /api/health`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551240841
+      }
+    ],
+    "14. Checkpoint — Core services and routes complete": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551241053
+      }
+    ],
+    "15.1 Create `server/scripts/migrate-sqlite-to-mysql.ts` — one-shot migration": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551241271
+      }
+    ],
+    "16.1 Update `server/index.ts` to add parallel DB initialization and new route mounts": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551241557
+      }
+    ],
+    "17.1 Create `server/services/transaction-search.service.ts` — cursor-based pagination engine": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551241773
+      }
+    ],
+    "17.2 Create `server/routes/transactions.ts` addition — `GET /api/transactions/search`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551241952
+      }
+    ],
+    "18.1 Create `server/scripts/reconcile_ledger.py` — balance verification and hash-chain tamper detection": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551242203
+      }
+    ],
+    "19.1 Create `server/services/fx-router.service.ts` — Bellman-Ford FX path finder": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551242412
+      }
+    ],
+    "19.2 Create `server/routes/fx.ts` — `POST /api/fx/best-route`": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551242638
+      }
+    ],
+    "19.3 Create `server/data/exchange-rates.json` — seed exchange rate graph": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551242879
+      }
+    ],
+    "20. Checkpoint — Algorithm implementations complete": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551243090
+      }
+    ],
+    "21.1 Apply security hardening measures across all new database and route code": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551243281
+      }
+    ],
+    "23.1 Wire all routers into `server/index.ts` and verify complete route surface": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551243452
+      }
+    ],
+    "23.2 Write integration-style unit tests for server startup sequence": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551243647
+      }
+    ],
+    "24. Final checkpoint — All tests pass": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551243857
+      }
+    ],
+    "1. Install dependencies and configure environment": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551636549
+      }
+    ],
+    "2. Environment validation and startup guard": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551786377
+      }
+    ],
+    "4. MySQL DDL migration file": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789551787140
+      }
+    ],
+    "3. MySQL connection layer": [
+      {
+        "executionId": "ca00e234-c481-4950-8ea6-3449929a25d7",
+        "chatSessionId": "sess_1ad48f84-4160-42c2-a2c6-5d26878eada4",
+        "timestamp": 1789552585901
+      }
+    ]
+  }
+}

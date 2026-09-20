@@ -50,6 +50,17 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const SESSION_KEY = "banking_session";
 const REMEMBER_KEY = "banking_remember";
 
+async function readAuthResponse(res: Response): Promise<{ user?: User; error?: string }> {
+  const contentType = res.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    return (await res.json()) as { user?: User; error?: string };
+  }
+
+  return {
+    error: "The authentication service is unavailable. Please try again shortly.",
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({ username: username.trim(), password }),
         });
 
-        const json = (await res.json()) as { user?: User; error?: string };
+        const json = await readAuthResponse(res);
 
         if (!res.ok) {
           throw new Error(json.error ?? "Login failed. Please try again.");
@@ -118,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(input),
       });
 
-      const json = (await res.json()) as { user?: User; error?: string };
+      const json = await readAuthResponse(res);
 
       if (!res.ok) {
         throw new Error(json.error ?? "Registration failed. Please try again.");

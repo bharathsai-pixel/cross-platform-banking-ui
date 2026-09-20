@@ -233,6 +233,14 @@ export default defineConfig({
       "localhost",
       "127.0.0.1",
     ],
+    proxy: {
+      // The Express API runs on port 3001 in development. Keep API calls
+      // same-origin for the client while forwarding them to that server.
+      "/api": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+    },
     fs: {
       strict: true,
       deny: ["**/.*"],
