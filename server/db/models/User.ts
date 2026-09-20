@@ -10,7 +10,7 @@ import { sequelize } from "../mysql.js";
 // DataTypes.BINARY is absent from Sequelize v6's bundled type definitions for
 // this package version.  Casting a raw SQL string to AbstractDataType lets
 // Sequelize pass it through to the MySQL dialect unchanged.
-const BINARY_16 = "BINARY(16)" as unknown as typeof DataTypes.BLOB;
+const BINARY_16 = DataTypes.STRING(16);
 
 export type KycStatus = "pending" | "verified" | "rejected";
 

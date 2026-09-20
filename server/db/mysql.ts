@@ -58,7 +58,7 @@ export const sequelize = new Sequelize({
   username: env.mysqlUser,
   password: env.mysqlPassword,
   database: env.mysqlName,
-  timezone: "Z",
+  timezone: "+00:00",
   logging: false,
   pool: {
     max: env.mysqlPoolMax,
@@ -93,10 +93,9 @@ export async function initMySQL(): Promise<void> {
     await sequelize.authenticate();
     clearTimeout(timeout);
 
-    const alter = env.nodeEnv !== "production";
-    await sequelize.sync({ alter });
+    await sequelize.sync();
 
-    console.log(`[mysql] Connected — sync({ alter: ${alter} })`);
+    console.log("[mysql] Connected — database schema synchronized");
   } catch (err) {
     clearTimeout(timeout);
     console.error("[mysql] Startup error:", err);

@@ -1,0 +1,26 @@
+# =============================================================================
+# NexusPay Banking API - Development Dockerfile
+# Hot reload with tsx watch
+# =============================================================================
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@10.4.1 --activate
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install all dependencies (including devDependencies)
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Expose ports (3000 for Vite, 3001 for API)
+EXPOSE 3000 3001
+
+# Start development server with hot reload
+CMD ["pnpm", "run", "dev:server"]

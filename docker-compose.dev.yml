@@ -1,0 +1,102 @@
+# =============================================================================
+# NexusPay Banking API - Docker Compose (Development)
+# Local development with hot reload and volume mounts
+# =============================================================================
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Development Server with hot reload
+  # ─────────────────────────────────────────────────────────────────────────────
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nexuspay-api-dev
+    ports:
+      - "3001:3001"
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      APP_URL: http://localhost:3000
+      # MySQL connection
+      DB_MYSQL_HOST: mysql
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: nexuspay_app
+      DB_MYSQL_PASSWORD: ${DB_MYSQL_PASSWORD:-nexuspay_dev_password}
+      DB_MYSQL_NAME: nexuspay
+      # MongoDB connection
+      DB_MONGO_URI: mongodb://mongodb:27017/nexuspay
+      # JWT secret
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_at_least_32_chars}
+      # Email (dev mode)
+      EMAIL_DEV_PREVIEW: "true"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - nexuspay-network
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MySQL 8 (Relational Database)
+  # ─────────────────────────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.4
+    container_name: nexuspay-mysql-dev
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_dev_password}
+      MYSQL_DATABASE: nexuspay
+      MYSQL_USER: nexuspay_app
+      MYSQL_PASSWORD: ${DB_MYSQL_PASSWORD:-nexuspay_dev_password}
+    volumes:
+      - mysql-dev-data:/var/lib/mysql
+      - ./server/db/migrations:/docker-entrypoint-initdb.d:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    networks:
+      - nexuspay-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MongoDB (Document Database)
+  # ─────────────────────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: nexuspay-mongodb-dev
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: nexuspay
+    volumes:
+      - mongodb-dev-data:/data/db
+    networks:
+      - nexuspay-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  nexuspay-network:
+    driver: bridge
+
+volumes:
+  mysql-dev-data:
+    driver: local
+  mongodb-dev-data:
+    driver: local

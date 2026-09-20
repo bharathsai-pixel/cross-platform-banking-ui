@@ -1,19 +1,3 @@
-/**
- * server/db/models/Account.ts
- *
- * Sequelize model for the `accounts` table.
- *
- * Key design decisions:
- *   • `balance` is declared as `string` — Sequelize reads DECIMAL(15,4) columns
- *     as strings by default, which prevents JavaScript floating-point rounding
- *     errors.  Use `decimal.js` or similar when performing arithmetic.
- *   • `version_id` is an optimistic-lock counter.  The transfer service issues
- *     a raw parameterised UPDATE … WHERE version_id = :v and checks
- *     affectedRows; if 0, it retries with fresh data.
- *   • `created_at` / `updated_at` are mapped to snake_case column names via
- *     `createdAt` / `updatedAt` options — Sequelize handles the mapping.
- */
-
 import {
   DataTypes,
   Model,
@@ -37,11 +21,12 @@ export class Account extends Model<
   declare readonly updated_at: CreationOptional<Date>;
 }
 
+// Use STRING(16) with BINARY attribute for UUID storage
 Account.init(
   {
-    id: { type: DataTypes.BINARY(16), primaryKey: true },
+    id: { type: DataTypes.STRING(16), primaryKey: true },
     user_id: {
-      type: DataTypes.BINARY(16),
+      type: DataTypes.STRING(16),
       allowNull: false,
       references: { model: "users", key: "id" },
     },

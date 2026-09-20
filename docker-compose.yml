@@ -1,0 +1,132 @@
+# =============================================================================
+# NexusPay Banking API - Docker Compose
+# Local development environment with MySQL + MongoDB
+# =============================================================================
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Application Server
+  # ─────────────────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: nexuspay-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      APP_URL: http://localhost:3000
+      # MySQL connection
+      DB_MYSQL_HOST: mysql
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: nexuspay_app
+      DB_MYSQL_PASSWORD: ${DB_MYSQL_PASSWORD:-nexuspay_dev_password}
+      DB_MYSQL_NAME: nexuspay
+      # MongoDB connection
+      DB_MONGO_URI: mongodb://mongodb:27017/nexuspay
+      # JWT secret (CHANGE IN PRODUCTION!)
+      JWT_SECRET: ${JWT_SECRET:-change_this_to_a_secure_32_char_random_string}
+      # Email (dev mode)
+      EMAIL_DEV_PREVIEW: "true"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - nexuspay-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MySQL 8 (Relational Database)
+  # Stores: users, accounts, transactions, beneficiaries
+  # ─────────────────────────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.4
+    container_name: nexuspay-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_dev_password}
+      MYSQL_DATABASE: nexuspay
+      MYSQL_USER: nexuspay_app
+      MYSQL_PASSWORD: ${DB_MYSQL_PASSWORD:-nexuspay_dev_password}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./server/db/migrations:/docker-entrypoint-initdb.d:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    networks:
+      - nexuspay-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_dev_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # MongoDB (Document Database)
+  # Stores: notifications, activity_logs, device_sessions
+  # ─────────────────────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: nexuspay-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: nexuspay
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - nexuspay-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Redis (Optional - for session caching, rate limit store)
+  # Uncomment if needed for Phase 2
+  # ─────────────────────────────────────────────────────────────────────────────
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: nexuspay-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - nexuspay-network
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 3
+
+networks:
+  nexuspay-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
+  mongodb-data:
+    driver: local
+  # redis-data:
+  #   driver: local

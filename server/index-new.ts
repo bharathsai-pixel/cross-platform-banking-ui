@@ -1,4 +1,4 @@
-﻿/**
+/**
  * server/index.ts
  *
  * Main server entry point for NexusPay Banking API.
@@ -20,7 +20,6 @@
  *   - MongoDB:   notifications, activity_logs, device_sessions
  */
 
-import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import path from "path";
