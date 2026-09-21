@@ -26,9 +26,9 @@ export class Beneficiary extends Model<
 
 Beneficiary.init(
   {
-    id: { type: DataTypes.STRING(16), primaryKey: true },
+    id: { type: "BINARY(16)" as any, primaryKey: true },
     user_id: {
-      type: DataTypes.STRING(16),
+      type: "BINARY(16)" as any,
       allowNull: false,
       references: { model: "users", key: "id" },
     },
