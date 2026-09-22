@@ -99,7 +99,7 @@ export async function executeTransfer(
   // Execute transfer atomically using MySQL transaction
   const result = await sequelize.transaction(async (t) => {
     // Lock sender account row and get fresh balance
-    const senderRows = await sequelize.query<Array<{ balance: string; version_id: number }>>(
+    const senderRows = await sequelize.query<{ balance: string; version_id: number }>(
       `SELECT balance, version_id FROM accounts WHERE id = UUID_TO_BIN(?) FOR UPDATE`,
       {
         replacements: [senderAccountId],
@@ -119,7 +119,7 @@ export async function executeTransfer(
     }
 
     // Lock receiver account row
-    const receiverRows = await sequelize.query<Array<{ balance: string }>>(
+    const receiverRows = await sequelize.query<{ balance: string }>(
       `SELECT balance FROM accounts WHERE id = UUID_TO_BIN(?) FOR UPDATE`,
       {
         replacements: [receiverAccountId],
@@ -150,7 +150,7 @@ export async function executeTransfer(
     );
 
     // Debit sender account (with optimistic lock check)
-    const debitResult = await sequelize.query<{ affectedRows: number }>(
+    const debitResult = await sequelize.query(
       `UPDATE accounts SET balance = balance - ?, version_id = version_id + 1, updated_at = NOW()
        WHERE id = UUID_TO_BIN(?) AND version_id = ?`,
       {
@@ -158,9 +158,9 @@ export async function executeTransfer(
         transaction: t,
         type: QueryTypes.UPDATE,
       }
-    );
+    ) as [unknown, number];
 
-    if (!debitResult || debitResult[0]?.affectedRows === 0) {
+    if (!debitResult || debitResult[1] === 0) {
       throw new Error("CONCURRENT_MODIFICATION");
     }
 
@@ -315,7 +315,7 @@ export async function getTransactionHistory(
   const whereClause = conditions.join(" AND ");
 
   // Get total count
-  const countRows = await sequelize.query<Array<{ total: number }>>(
+  const countRows = await sequelize.query<{ total: number }>(
     `SELECT COUNT(*) as total FROM transactions WHERE ${whereClause}`,
     { replacements, type: QueryTypes.SELECT }
   );

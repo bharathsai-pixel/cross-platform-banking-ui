@@ -42,7 +42,7 @@ const activities: Activity[] = [
   { name: "Razorpay", note: "Online payment · UPI", date: "Today, 10:42 AM", amount: "− ₹1,240.00", direction: "out", icon: "send", category: "Payments" },
   { name: "Salary credit", note: "HDFC Bank · **** 4081", date: "Today, 08:15 AM", amount: "+ ₹68,500.00", direction: "in", icon: "building", category: "Income" },
   { name: "Swiggy", note: "Food & dining · Card", date: "Yesterday, 09:18 PM", amount: "− ₹684.00", direction: "out", icon: "card", category: "Food" },
-  { name: "Rahul Mehta", note: "Received via PulsePay", date: "Yesterday, 04:03 PM", amount: "+ ₹2,500.00", direction: "in", icon: "wallet", category: "Transfer" },
+  { name: "Rahul Mehta", note: "Received via NexusPay", date: "Yesterday, 04:03 PM", amount: "+ ₹2,500.00", direction: "in", icon: "wallet", category: "Transfer" },
   { name: "Netflix", note: "Subscriptions · Card", date: "18 Sep, 11:30 AM", amount: "− ₹649.00", direction: "out", icon: "card", category: "Subscriptions" },
 ];
 
@@ -103,10 +103,10 @@ function Home() {
     <div className="app-shell">
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
         <div className="brand-lockup">
-          <div className="brand-mark"><span>p</span></div>
+          <div className="brand-mark"><span>N</span></div>
           <div>
-            <div className="brand-name">pulse<span>bank</span></div>
-            <div className="brand-caption">cross-platform banking</div>
+            <div className="brand-name">Nexus<span>Pay</span></div>
+            <div className="brand-caption">Banking & FinTech Platform</div>
           </div>
           <button className="icon-button sidebar-close" onClick={() => setMobileNav(false)} aria-label="Close menu"><X size={20} /></button>
         </div>
@@ -185,11 +185,11 @@ function Home() {
           </section>
 
           <section className="secure-banner"><div className="secure-banner-icon"><ShieldCheck size={22} /></div><div><strong>Banking that stays one step ahead.</strong><span>Your data is protected with end-to-end encryption and real-time activity monitoring.</span></div><button onClick={() => notify("Security center opened")}>Security center <ChevronRight size={16} /></button></section>
-          <footer className="app-footer"><span>PulseBank · Cross-platform transaction application</span><span><Smartphone size={14} /> Designed for web & mobile</span></footer>
+          <footer className="app-footer"><span>NexusPay · Cross-platform transaction application</span><span><Smartphone size={14} /> Designed for web & mobile</span></footer>
         </div>
       </main>
 
-      {showTransfer && <div className="modal-backdrop" onClick={() => setShowTransfer(false)}><div className="transfer-modal" onClick={(event) => event.stopPropagation()}><div className="modal-header"><div><div className="eyebrow">Secure transfer</div><h2>Send money</h2><p>Move funds to a bank account or trusted contact.</p></div><button className="icon-button" onClick={() => setShowTransfer(false)} aria-label="Close transfer dialog"><X size={20} /></button></div>{transferSent ? <div className="success-state"><div className="success-check"><ShieldCheck size={25} /></div><h3>Transfer ready to go</h3><p>We’re securely scheduling your transfer.</p></div> : <form onSubmit={sendTransfer}><label>Recipient<input required placeholder="Name or UPI ID" /></label><label>Amount<div className="amount-input"><span>₹</span><input required type="number" min="1" placeholder="0.00" /></div></label><label>Note <span className="optional">Optional</span><input placeholder="What’s this for?" /></label><div className="modal-footnote"><ShieldCheck size={15} /> Protected by PulseBank secure authorization</div><button className="primary-button wide" type="submit"><Send size={17} /> Review transfer</button></form>}</div></div>}
+      {showTransfer && <div className="modal-backdrop" onClick={() => setShowTransfer(false)}><div className="transfer-modal" onClick={(event) => event.stopPropagation()}><div className="modal-header"><div><div className="eyebrow">Secure transfer</div><h2>Send money</h2><p>Move funds to a bank account or trusted contact.</p></div><button className="icon-button" onClick={() => setShowTransfer(false)} aria-label="Close transfer dialog"><X size={20} /></button></div>{transferSent ? <div className="success-state"><div className="success-check"><ShieldCheck size={25} /></div><h3>Transfer ready to go</h3><p>We’re securely scheduling your transfer.</p></div> : <form onSubmit={sendTransfer}><label>Recipient<input required placeholder="Name or UPI ID" /></label><label>Amount<div className="amount-input"><span>₹</span><input required type="number" min="1" placeholder="0.00" /></div></label><label>Note <span className="optional">Optional</span><input placeholder="What’s this for?" /></label><div className="modal-footnote"><ShieldCheck size={15} /> Protected by NexusPay secure authorization</div><button className="primary-button wide" type="submit"><Send size={17} /> Review transfer</button></form>}</div></div>}
       {toast && <div className="toast"><ShieldCheck size={17} /><span>{toast}</span></div>}
     </div>
   );

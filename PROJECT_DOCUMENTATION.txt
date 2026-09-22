@@ -1,0 +1,1493 @@
+================================================================================
+                     NEXUSPAY - CROSS-PLATFORM BANKING SYSTEM
+                        COMPLETE TECHNICAL DOCUMENTATION
+================================================================================
+
+Generated: September 21, 2026
+Project: Cross-platform Transaction for Banking and FinTech
+System Name: NexusPay (PulseBank UI)
+
+================================================================================
+                              TABLE OF CONTENTS
+================================================================================
+
+1. SYSTEM OVERVIEW
+2. SYSTEM ARCHITECTURE
+3. FRONTEND IMPLEMENTATION
+4. BACKEND IMPLEMENTATION
+5. ALGORITHMS AND METHODS
+6. DATABASE DESIGN
+7. FRONTEND-BACKEND CONNECTION
+8. SECURITY IMPLEMENTATION
+9. API ENDPOINTS
+10. LIBRARIES AND DEPENDENCIES
+
+================================================================================
+                          1. SYSTEM OVERVIEW
+================================================================================
+
+PROJECT NAME: NexusPay Banking API
+TYPE: Cross-platform Transaction Application for Banking and FinTech
+ARCHITECTURE STYLE: Monolithic Backend (Phase 1) → Microservices (Phase 2 - Future)
+
+PURPOSE:
+NexusPay is a cross-platform transaction application designed for banking and
+FinTech operations. It provides a complete digital banking experience with
+account management, fund transfers, beneficiary management, notifications,
+and intelligent search capabilities.
+
+CORE FEATURES:
+- User registration and authentication with JWT
+- Multi-currency account management
+- Secure fund transfers with ACID compliance
+- Beneficiary/payee management
+- Real-time notifications
+- Activity logging and audit trails
+- TF-IDF based similarity search
+- Interactive dashboard with cash flow visualization
+
+================================================================================
+                        2. SYSTEM ARCHITECTURE
+================================================================================
+
+ARCHITECTURE TYPE: Monolithic Backend with Clear Module Boundaries
+DEPLOYMENT: Containerized with Docker
+
+TECHNOLOGY STACK:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Layer                  │ Technology                                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Frontend Framework     │ React 19.2.1 with TypeScript                        │
+│ Build Tool             │ Vite 7.1.7                                          │
+│ Styling                │ TailwindCSS 4.1.14                                  │
+│ Backend Framework      │ Express.js (Node.js 20+)                            │
+│ Relational Database    │ MySQL 8 with Sequelize ORM                          │
+│ Document Database      │ MongoDB 7 with Mongoose ODM                         │
+│ Authentication         │ JWT + bcrypt                                        │
+│ Validation             │ Zod                                                 │
+│ API Documentation      │ Swagger/OpenAPI 3.0                                 │
+│ Containerization       │ Docker + Docker Compose                             │
+│ State Management       │ React Context API                                   │
+│ Routing                │ Wouter (lightweight React router)                   │
+│ HTTP Client            │ Native Fetch API                                    │
+│ Charts/Visualization   │ Recharts 2.15.2                                     │
+│ Animation              │ Framer Motion 12.23.22                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+PROJECT STRUCTURE:
+
+cross-platform-banking-ui/
+├── client/                    # React frontend (Vite)
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   │   └── ui/           # Reusable UI components (Radix-based)
+│   │   ├── contexts/         # React Context (Auth, Theme)
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── pages/            # Page components (Login, Home, etc.)
+│   │   ├── lib/              # Utility functions
+│   │   ├── App.tsx           # Main application component
+│   │   └── main.tsx          # Entry point
+│   └── public/               # Static assets
+│
+├── server/                    # Express.js backend
+│   ├── config/               # Environment, Swagger config
+│   ├── db/
+│   │   ├── models/           # Sequelize models (MySQL)
+│   │   ├── mongo-models/     # Mongoose models (MongoDB)
+│   │   ├── migrations/       # SQL migrations
+│   │   ├── mysql.ts          # MySQL connection
+│   │   └── mongodb.ts        # MongoDB connection
+│   ├── middleware/
+│   │   ├── auth.ts           # JWT verification middleware
+│   │   └── rateLimiter.ts    # Rate limiting middleware
+│   ├── routes/               # API route handlers
+│   │   ├── auth-new.ts       # /api/auth endpoints
+│   │   ├── accounts.ts       # /api/accounts endpoints
+│   │   ├── transactions.ts   # /api/transactions endpoints
+│   │   ├── beneficiaries.ts  # /api/beneficiaries endpoints
+│   │   ├── notifications.ts  # /api/notifications endpoints
+│   │   └── search.ts         # /api/search endpoints
+│   ├── services/             # Business logic layer
+│   │   ├── authService.ts
+│   │   ├── accountService.ts
+│   │   ├── transferService.ts
+│   │   ├── beneficiaryService.ts
+│   │   ├── notificationService.ts
+│   │   └── searchService.ts
+│   ├── utils/                # Utility functions (UUID helpers)
+│   ├── validation/           # Zod validation schemas
+│   └── index.ts              # Server entry point
+│
+├── shared/                    # Shared types/utilities
+├── tests/                     # Unit tests
+├── Dockerfile                 # Production container
+├── docker-compose.yml         # Production orchestration
+└── vite.config.ts            # Vite configuration with API proxy
+
+================================================================================
+                      3. FRONTEND IMPLEMENTATION
+================================================================================
+
+FRAMEWORK: React 19.2.1 with TypeScript
+BUILD TOOL: Vite 7.1.7
+STYLING: TailwindCSS 4.1.14 with custom design system
+
+--------------------------------------------------------------------------------
+3.1 FRONTEND LIBRARIES
+--------------------------------------------------------------------------------
+
+UI COMPONENTS (Radix UI Primitives):
+- @radix-ui/react-accordion         - Collapsible content sections
+- @radix-ui/react-alert-dialog      - Modal alert dialogs
+- @radix-ui/react-avatar            - User avatars
+- @radix-ui/react-checkbox          - Checkbox inputs
+- @radix-ui/react-dialog            - Modal dialogs
+- @radix-ui/react-dropdown-menu     - Dropdown menus
+- @radix-ui/react-label             - Form labels
+- @radix-ui/react-popover           - Popover overlays
+- @radix-ui/react-progress          - Progress indicators
+- @radix-ui/react-scroll-area       - Scrollable containers
+- @radix-ui/react-select            - Select dropdowns
+- @radix-ui/react-separator         - Visual separators
+- @radix-ui/react-slider            - Range sliders
+- @radix-ui/react-slot              - Component slots
+- @radix-ui/react-switch            - Toggle switches
+- @radix-ui/react-tabs              - Tab interfaces
+- @radix-ui/react-tooltip           - Tooltips
+
+FORM HANDLING:
+- react-hook-form 7.64.0            - Form state management
+- @hookform/resolvers 5.2.2         - Zod integration for forms
+- zod 4.1.12                        - Schema validation
+
+ROUTING & NAVIGATION:
+- wouter 3.3.5                      - Lightweight client-side router
+
+STATE MANAGEMENT:
+- React Context API                 - Global state (Auth, Theme)
+- useState/useReducer               - Local component state
+
+HTTP COMMUNICATION:
+- Native Fetch API                  - API calls to backend
+- axios 1.12.0                      - HTTP client (available)
+
+VISUALIZATION:
+- recharts 2.15.2                   - Charts and data visualization
+- framer-motion 12.23.22            - Animations
+
+UI UTILITIES:
+- lucide-react 0.453.0              - Icon library
+- class-variance-authority 0.7.1    - Component variants
+- clsx 2.1.1                        - Conditional classnames
+- tailwind-merge 3.3.1              - Merge Tailwind classes
+
+THEMING:
+- next-themes 0.4.6                 - Dark/light mode support
+
+NOTIFICATIONS:
+- sonner 2.0.7                      - Toast notifications
+
+MISC:
+- react-day-picker 9.11.1           - Date pickers
+- react-resizable-panels 3.0.6      - Resizable panels
+- embla-carousel-react 8.6.0        - Carousel/slider
+- cmdk 1.1.1                        - Command palette
+- vaul 1.1.2                        - Drawer component
+- input-otp 1.4.2                   - OTP input
+
+--------------------------------------------------------------------------------
+3.2 FRONTEND COMPONENTS
+--------------------------------------------------------------------------------
+
+PAGE COMPONENTS:
+- Home.tsx           - Main dashboard with account overview, charts, activity
+- Login.tsx          - User login form
+- SignUp.tsx         - User registration form
+- ForgotPassword.tsx - Password reset request
+- ResetPassword.tsx  - Password reset with token
+- NotFound.tsx       - 404 error page
+
+PROTECTED ROUTES:
+- ProtectedRoute.tsx - HOC that checks authentication before rendering
+
+CONTEXT PROVIDERS:
+- AuthContext.tsx    - Manages user authentication state
+  • login()          - POST /api/auth/login
+  • register()       - POST /api/auth/register
+  • logout()         - Clear session
+  • Session persistence in sessionStorage/localStorage
+
+- ThemeContext.tsx   - Manages light/dark theme
+
+CUSTOM HOOKS:
+- useMobile.tsx      - Detect mobile viewport
+- useComposition.ts  - Handle IME composition
+- usePersistFn.ts    - Persist callback references
+
+UI COMPONENT LIBRARY (client/src/components/ui/):
+- accordion.tsx, alert.tsx, alert-dialog.tsx
+- avatar.tsx, badge.tsx, breadcrumb.tsx
+- button.tsx, button-group.tsx
+- calendar.tsx, card.tsx, carousel.tsx
+- chart.tsx, checkbox.tsx, collapsible.tsx
+- command.tsx, context-menu.tsx
+- dialog.tsx, drawer.tsx, dropdown-menu.tsx
+- empty.tsx, field.tsx, form.tsx
+- hover-card.tsx, input.tsx, input-group.tsx, input-otp.tsx
+- item.tsx, kbd.tsx, label.tsx
+- menubar.tsx, navigation-menu.tsx
+- pagination.tsx, popover.tsx, progress.tsx
+- radio-group.tsx, resizable.tsx, scroll-area.tsx
+- select.tsx, separator.tsx, sheet.tsx, sidebar.tsx
+- skeleton.tsx, slider.tsx, sonner.tsx, spinner.tsx
+- switch.tsx, table.tsx, tabs.tsx, textarea.tsx
+- toggle.tsx, toggle-group.tsx, tooltip.tsx
+
+--------------------------------------------------------------------------------
+3.3 FRONTEND FEATURES IMPLEMENTED
+--------------------------------------------------------------------------------
+
+HOME DASHBOARD:
+- Account summary cards (total balance, money in, money out)
+- Financial score display
+- Cash flow visualization (SVG chart with gradient fill)
+- Primary account card display
+- Recent activity list with filtering
+- Quick actions (Send money, Add money, Pay bill)
+- Notification system with popover
+- Transfer modal with form validation
+- Toast notifications
+- Mobile-responsive sidebar navigation
+
+AUTHENTICATION PAGES:
+- Login with username/password
+- Registration with validation
+- Password reset flow
+- "Remember me" functionality
+- Error handling and display
+
+UI FEATURES:
+- Show/hide balance toggle
+- Copy account number to clipboard
+- Search activity with filtering
+- Mobile navigation drawer
+- Real-time toast notifications
+- Loading states
+- Error boundaries
+
+================================================================================
+                       4. BACKEND IMPLEMENTATION
+================================================================================
+
+FRAMEWORK: Express.js (Node.js)
+LANGUAGE: TypeScript (ESM modules)
+API STYLE: RESTful
+
+--------------------------------------------------------------------------------
+4.1 BACKEND LIBRARIES
+--------------------------------------------------------------------------------
+
+CORE FRAMEWORK:
+- express 4.21.2                    - Web server framework
+
+DATABASE:
+- mysql2 3.24.4                     - MySQL driver
+- sequelize 6.37.8                  - ORM for MySQL
+- mongoose 9.10.1                   - ODM for MongoDB
+
+AUTHENTICATION & SECURITY:
+- jsonwebtoken 9.0.3                - JWT generation/verification
+- bcryptjs 3.0.3                    - Password hashing
+- express-rate-limit 8.7.0          - Rate limiting middleware
+
+VALIDATION:
+- zod 4.1.12                        - Schema validation
+
+UTILITIES:
+- dotenv 18.0.1                     - Environment variables
+- uuid 14.0.2                       - UUID generation
+- nanoid 5.1.5                      - Unique ID generation
+- decimal.js 10.6.0                 - Precise decimal arithmetic
+
+EMAIL:
+- nodemailer 10.0.10                - Email sending
+
+API DOCUMENTATION:
+- swagger-jsdoc 6.3.0               - Swagger spec from JSDoc
+- swagger-ui-express 5.0.1          - Swagger UI endpoint
+
+DEVELOPMENT:
+- tsx 4.19.1                        - TypeScript execution
+- esbuild 0.25.0                    - Production bundling
+- vitest 2.1.4                      - Testing framework
+- typescript 5.6.3                  - Type checking
+
+--------------------------------------------------------------------------------
+4.2 BACKEND MODULES
+--------------------------------------------------------------------------------
+
+1. AUTH MODULE (server/routes/auth-new.ts, server/services/authService.ts)
+   RESPONSIBILITY: User registration, login, JWT issuance, password reset
+
+   METHODS:
+   - registerUser()     - Creates new user with hashed password
+   - loginUser()        - Validates credentials, issues JWT
+   - createPasswordResetToken() - Generates secure reset token
+   - resetPassword()    - Updates password with token verification
+
+   FEATURES:
+   - bcrypt hashing (12 rounds)
+   - JWT with 7-day expiry
+   - SHA-256 hashed reset tokens
+   - Automatic USD account creation on registration
+   - Activity logging for auth events
+
+2. ACCOUNTS MODULE (server/routes/accounts.ts, server/services/accountService.ts)
+   RESPONSIBILITY: Account creation, balance queries, account management
+
+   FEATURES:
+   - Multi-currency account support
+   - Balance retrieval with formatting
+   - Account number generation (XXXX-XXXX-XXXX-XXXX format)
+   - User can have one account per currency
+
+3. TRANSACTIONS MODULE (server/routes/transactions.ts, server/services/transferService.ts)
+   RESPONSIBILITY: Fund transfers, transaction history
+
+   METHODS:
+   - executeTransfer()  - Atomic fund transfer with ACID guarantees
+   - getTransactionHistory() - Paginated transaction list
+
+   FEATURES:
+   - MySQL transactions for atomicity
+   - Optimistic locking (version_id)
+   - Row-level locking (SELECT ... FOR UPDATE)
+   - Balance validation
+   - Self-transfer prevention
+   - Reference ID generation
+   - Activity logging
+   - Notification creation
+
+4. BENEFICIARIES MODULE (server/routes/beneficiaries.ts, server/services/beneficiaryService.ts)
+   RESPONSIBILITY: Saved payees management
+
+   FEATURES:
+   - CRUD operations for beneficiaries
+   - Bank code support (SWIFT, IFSC, routing numbers)
+   - Favorite marking
+   - Nickname support
+
+5. NOTIFICATIONS MODULE (server/routes/notifications.ts, server/services/notificationService.ts)
+   RESPONSIBILITY: User alerts, notification management
+
+   FEATURES:
+   - Notification types: transaction, security, system, promo
+   - Priority levels: low, normal, high, urgent
+   - Mark as read (single and bulk)
+   - TTL-based auto-expiration
+   - Pagination and filtering
+
+6. SEARCH MODULE (server/routes/search.ts, server/services/searchService.ts)
+   RESPONSIBILITY: Similarity-based search across transactions and activity
+
+   ALGORITHM: TF-IDF + Cosine Similarity (see Section 5)
+
+   FEATURES:
+   - Searches transactions and activity logs
+   - Semantic matching (not just keyword matching)
+   - Configurable similarity threshold
+   - Stop word filtering
+   - Score-based ranking
+
+--------------------------------------------------------------------------------
+4.3 BACKEND MIDDLEWARE
+--------------------------------------------------------------------------------
+
+AUTHENTICATION MIDDLEWARE (server/middleware/auth.ts):
+- requireAuth()       - Validates JWT, attaches req.user
+- optionalAuth()      - Attaches req.user if token present, no rejection
+
+RATE LIMITING MIDDLEWARE (server/middleware/rateLimiter.ts):
+- standardLimiter     - 100 requests / 15 minutes (general API)
+- authLimiter         - 5 requests / 15 minutes (login/register)
+- transferLimiter     - 10 requests / 15 minutes (fund transfers)
+
+ERROR HANDLING:
+- Global error handler with 500 status
+- Zod validation errors with detailed field messages
+- Custom error messages for business logic errors
+
+================================================================================
+                     5. ALGORITHMS AND METHODS
+================================================================================
+
+--------------------------------------------------------------------------------
+5.1 TF-IDF + COSINE SIMILARITY SEARCH ALGORITHM
+--------------------------------------------------------------------------------
+
+PURPOSE: Semantic search over transactions and activity logs
+LOCATION: server/services/searchService.ts
+
+IMPLEMENTATION:
+
+1. TOKENIZATION:
+   - Lowercase conversion
+   - Punctuation removal
+   - Stop word filtering (English stop words: a, an, the, is, etc.)
+   - Minimum word length: 2 characters
+
+2. TERM FREQUENCY (TF) COMPUTATION:
+   - Counts word occurrences in document
+   - Normalizes by document length
+   - Formula: TF(term) = count(term) / total_terms
+
+3. COSINE SIMILARITY CALCULATION:
+   - Measures similarity between query vector and document vector
+   - Formula: similarity = (A · B) / (||A|| × ||B||)
+   - Where:
+     - A · B = dot product of vectors
+     - ||A|| = Euclidean norm of vector A
+     - ||B|| = Euclidean norm of vector B
+
+4. SEARCH PROCESS:
+   a. Tokenize query and compute TF vector
+   b. Fetch relevant documents from database
+   c. For each document:
+      - Tokenize searchable text
+      - Compute TF vector
+      - Calculate cosine similarity
+      - Include if score >= threshold (default: 0.3)
+   d. Sort results by score descending
+   e. Return top N results (default: 20)
+
+STOP WORDS FILTERED (Partial List):
+a, an, and, are, as, at, be, by, for, from, has, he, in, is, it, its,
+of, on, that, the, to, was, were, will, with, the, this, but, they,
+have, had, what, when, where, who, which, why, how, all, each, every,
+both, few, more, most, other, some, such, no, nor, not, only, own,
+same, so, than, too, very, can, just, should, now, also, been, being
+
+EXAMPLE:
+Query: "payment sent"
+Documents scored by similarity to: ["payment", "sent"]
+Results include transactions with similar descriptions, not just exact matches
+
+--------------------------------------------------------------------------------
+5.2 ATOMIC FUND TRANSFER ALGORITHM
+--------------------------------------------------------------------------------
+
+PURPOSE: Ensure money is never lost or duplicated during transfers
+LOCATION: server/services/transferService.ts
+
+IMPLEMENTATION: MySQL Transaction with Row-Level Locking
+
+ALGORITHM STEPS:
+
+1. VALIDATION PHASE:
+   - Verify sender account exists
+   - Check sufficient balance
+   - Verify receiver account exists
+   - Prevent self-transfer
+
+2. LOCKING PHASE (within MySQL transaction):
+   a. BEGIN TRANSACTION
+   b. Lock sender account row:
+      SELECT balance, version_id FROM accounts
+      WHERE id = ? FOR UPDATE
+   c. Lock receiver account row:
+      SELECT balance FROM accounts
+      WHERE id = ? FOR UPDATE
+   d. Re-check balance (may have changed since first check)
+
+3. EXECUTION PHASE:
+   a. Create pending transaction record:
+      INSERT INTO transactions (..., status='pending')
+   b. Debit sender with optimistic lock check:
+      UPDATE accounts
+      SET balance = balance - ?, version_id = version_id + 1
+      WHERE id = ? AND version_id = ?
+      (If affectedRows = 0, raise CONCURRENT_MODIFICATION error)
+   c. Credit receiver:
+      UPDATE accounts
+      SET balance = balance + ?, version_id = version_id + 1
+      WHERE id = ?
+   d. Mark transaction completed:
+      UPDATE transactions SET status = 'completed' WHERE id = ?
+   e. COMMIT TRANSACTION
+
+4. POST-TRANSFER PHASE (after successful commit):
+   - Log activity for sender (MongoDB)
+   - Log activity for receiver (MongoDB)
+   - Create notification for receiver (MongoDB)
+
+OPTIMISTIC LOCKING:
+- Uses version_id column in accounts table
+- Each update increments version_id
+- UPDATE checks version_id matches expected value
+- If mismatch, indicates concurrent modification → retry
+
+ROLLBACK:
+- If any step fails, entire transaction rolls back
+- No partial state possible
+
+--------------------------------------------------------------------------------
+5.3 PASSWORD HASHING ALGORITHM
+--------------------------------------------------------------------------------
+
+PURPOSE: Secure password storage
+IMPLEMENTATION: bcrypt with 12 rounds
+
+PROCESS:
+1. User submits password during registration/login
+2. Server generates salt (bcrypt internal, 12 rounds)
+3. Password hashed: hash = bcrypt(password, 12)
+4. Hash stored in database (not plaintext password)
+5. During login: bcrypt.compare(password, stored_hash)
+
+SECURITY FEATURES:
+- Salt automatically generated and included in hash
+- Work factor of 12 rounds (computationally expensive)
+- Constant-time comparison (prevents timing attacks)
+
+--------------------------------------------------------------------------------
+5.4 JWT AUTHENTICATION ALGORITHM
+--------------------------------------------------------------------------------
+
+PURPOSE: Stateless authentication
+IMPLEMENTATION: JSON Web Tokens with HS256 signature
+
+TOKEN STRUCTURE:
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "johndoe",
+  "email": "john.doe@example.com",
+  "iat": 1234567890,
+  "exp": 1234567890
+}
+
+PROCESS:
+1. User logs in with credentials
+2. Server validates credentials
+3. Server creates JWT with user ID, username, email
+4. Token signed with JWT_SECRET (HS256)
+5. Token returned to client
+6. Client stores token (sessionStorage/localStorage)
+7. Client sends token in Authorization: Bearer <token> header
+8. Server verifies signature and extracts claims
+9. req.user populated with token payload
+
+EXPIRY: 7 days (JWT_EXPIRES_IN = "7d")
+
+--------------------------------------------------------------------------------
+5.5 PASSWORD RESET TOKEN ALGORITHM
+--------------------------------------------------------------------------------
+
+PURPOSE: Secure password reset flow
+IMPLEMENTATION: SHA-256 hashed tokens with expiration
+
+PROCESS:
+1. User requests reset with email
+2. Server generates random 32-byte token: crypto.randomBytes(32)
+3. Token converted to hex string (64 characters)
+4. Token hashed with SHA-256: hash = sha256(token)
+5. Hash stored in user record with 1-hour expiration
+6. Raw token sent to user via email
+7. User submits raw token with new password
+8. Server hashes submitted token and compares to stored hash
+9. If match and not expired, password updated
+
+SECURITY:
+- Only hashed token stored in database
+- Even if database leaked, cannot reconstruct raw token
+- 1-hour TTL prevents indefinite validity
+- Token cleared after use
+
+================================================================================
+                         6. DATABASE DESIGN
+================================================================================
+
+ARCHITECTURE: Polyglot Persistence (MySQL + MongoDB)
+
+--------------------------------------------------------------------------------
+6.1 MYSQL DATABASE (Relational Data)
+--------------------------------------------------------------------------------
+
+PURPOSE: ACID-compliant storage for financial data
+
+TABLES:
+
+1. USERS TABLE:
+   ┌─────────────────────┬────────────────────────────────────────┐
+   │ Column              │ Description                            │
+   ├─────────────────────┼────────────────────────────────────────┤
+   │ id                  │ BINARY(16) UUID, Primary Key           │
+   │ username            │ VARCHAR(30), Unique                    │
+   │ first_name          │ VARCHAR(100)                           │
+   │ last_name           │ VARCHAR(100)                           │
+   │ email               │ VARCHAR(320), Unique                   │
+   │ password_hash       │ VARCHAR(255)                           │
+   │ pin_hash            │ VARCHAR(255), Optional                 │
+   │ kyc_status          │ ENUM('pending','verified','rejected')  │
+   │ reset_token         │ VARCHAR(64), Nullable                  │
+   │ reset_token_expires │ BIGINT, Nullable                       │
+   │ created_at          │ DATETIME                               │
+   │ updated_at          │ DATETIME                               │
+   └─────────────────────┴────────────────────────────────────────┘
+   INDEXES:
+   - email (BTREE)
+
+2. ACCOUNTS TABLE:
+   ┌─────────────────┬────────────────────────────────────────────┐
+   │ Column          │ Description                                │
+   ├─────────────────┼────────────────────────────────────────────┤
+   │ id              │ BINARY(16) UUID, Primary Key               │
+   │ user_id         │ BINARY(16) FK → users.id                   │
+   │ account_number  │ VARCHAR(30), Unique                        │
+   │ balance         │ DECIMAL(15,4)                              │
+   │ currency        │ CHAR(3) ISO 4217                           │
+   │ version_id      │ INT UNSIGNED (optimistic lock)             │
+   │ created_at      │ DATETIME                                   │
+   │ updated_at      │ DATETIME                                   │
+   └─────────────────┴────────────────────────────────────────────┘
+   INDEXES:
+   - user_id (BTREE)
+   - (user_id, currency) UNIQUE
+
+   CONSTRAINTS:
+   - One account per user per currency
+
+3. TRANSACTIONS TABLE:
+   ┌──────────────────────┬──────────────────────────────────────┐
+   │ Column               │ Description                          │
+   ├──────────────────────┼──────────────────────────────────────┤
+   │ id                   │ BINARY(16) UUID, Primary Key         │
+   │ sender_account_id    │ BINARY(16) FK → accounts.id          │
+   │ receiver_account_id  │ BINARY(16) FK → accounts.id          │
+   │ amount               │ DECIMAL(15,4)                        │
+   │ currency             │ CHAR(3)                              │
+   │ transaction_type     │ ENUM('internal','wire','billpay')    │
+   │ status               │ ENUM('pending','completed','failed', │
+   │                      │      'reversed')                     │
+   │ reference_id         │ VARCHAR(128), Nullable               │
+   │ created_at           │ DATETIME                             │
+   └──────────────────────┴──────────────────────────────────────┘
+   INDEXES:
+   - (sender_account_id, created_at)
+   - (receiver_account_id, created_at)
+
+   DESIGN DECISIONS:
+   - Append-only (no UPDATE/DELETE allowed via ORM hooks)
+   - Immutable transaction records
+   - Status transitions via service methods only
+
+4. BENEFICIARIES TABLE:
+   ┌────────────────┬────────────────────────────────────────────┐
+   │ Column         │ Description                                │
+   ├────────────────┼────────────────────────────────────────────┤
+   │ id             │ BINARY(16) UUID, Primary Key               │
+   │ user_id        │ BINARY(16) FK → users.id                   │
+   │ name           │ VARCHAR(100)                               │
+   │ account_number │ VARCHAR(30)                                │
+   │ bank_name      │ VARCHAR(100), Nullable                     │
+   │ bank_code      │ VARCHAR(20), Nullable                      │
+   │ currency       │ CHAR(3), Nullable                          │
+   │ nickname       │ VARCHAR(50), Nullable                      │
+   │ is_favorite    │ BOOLEAN DEFAULT false                      │
+   │ created_at     │ DATETIME                                   │
+   │ updated_at     │ DATETIME                                   │
+   └────────────────┴────────────────────────────────────────────┘
+
+--------------------------------------------------------------------------------
+6.2 MONGODB DATABASE (Document Data)
+--------------------------------------------------------------------------------
+
+PURPOSE: Flexible storage for notifications, logs, sessions
+
+COLLECTIONS:
+
+1. NOTIFICATIONS COLLECTION:
+   ┌─────────────────┬──────────────────────────────────────────┐
+   │ Field           │ Description                              │
+   ├─────────────────┼──────────────────────────────────────────┤
+   │ userId          │ String (UUID from MySQL users)           │
+   │ type            │ String: 'transaction','security',        │
+   │                 │         'system','promo'                 │
+   │ priority        │ String: 'low','normal','high','urgent'   │
+   │ title           │ String (max 200)                         │
+   │ message         │ String (max 1000)                        │
+   │ data            │ Mixed (transaction ID, amounts, etc.)    │
+   │ readAt          │ Date, Nullable                           │
+   │ read            │ Boolean (default false)                  │
+   │ archived        │ Boolean (default false)                  │
+   │ expiresAt       │ Date, Nullable (TTL)                     │
+   │ createdAt       │ Date                                     │
+   │ updatedAt       │ Date                                     │
+   └─────────────────┴──────────────────────────────────────────┘
+   INDEXES:
+   - { userId: 1, read: 1, createdAt: -1 }
+   - { userId: 1, type: 1, createdAt: -1 }
+   - { expiresAt: 1 } TTL (auto-delete expired)
+
+2. ACTIVITY_LOGS COLLECTION:
+   ┌──────────────────────┬──────────────────────────────────────┐
+   │ Field                │ Description                          │
+   ├──────────────────────┼──────────────────────────────────────┤
+   │ userId               │ String (UUID from MySQL users)       │
+   │ eventType            │ String (e.g., 'user.login',          │
+   │                      │        'transfer.completed')         │
+   │ category             │ String: 'auth','account',            │
+   │                      │         'transaction','beneficiary', │
+   │                      │         'security','system'          │
+   │ metadata             │ Mixed (event-specific data)          │
+   │ ipAddress            │ String, Nullable                     │
+   │ userAgent            │ String, Nullable                     │
+   │ deviceFingerprint    │ String, Nullable                     │
+   │ createdAt            │ Date                                 │
+   └──────────────────────┴──────────────────────────────────────┘
+   INDEXES:
+   - { userId: 1, createdAt: -1 }
+   - { userId: 1, category: 1, createdAt: -1 }
+   - { "metadata.description": "text", "metadata.reference": "text" }
+
+   EVENT TYPES:
+   - user.login, user.logout, user.register, user.password_change
+   - account.created, account.viewed
+   - transfer.initiated, transfer.completed, transfer.failed
+   - beneficiary.added, beneficiary.updated, beneficiary.deleted
+   - security.device_new, security.alert
+
+3. DEVICES_AND_SESSIONS COLLECTION (DeviceSession model):
+   ┌─────────────────────┬────────────────────────────────────────┐
+   │ Field               │ Description                            │
+   ├─────────────────────┼────────────────────────────────────────┤
+   │ userId              │ String (UUID from MySQL users)         │
+   │ deviceFingerprint   │ String                                 │
+   │ refreshToken        │ String (hashed)                        │
+   │ userAgent           │ String                                 │
+   │ ipAddress           │ String                                 │
+   │ lastActiveAt        │ Date                                   │
+   │ expiresAt           │ Date                                   │
+   │ createdAt           │ Date                                   │
+   └─────────────────────┴────────────────────────────────────────┘
+
+================================================================================
+                    7. FRONTEND-BACKEND CONNECTION
+================================================================================
+
+CONNECTION TYPE: REST API over HTTP
+COMMUNICATION FORMAT: JSON
+
+--------------------------------------------------------------------------------
+7.1 DEVELOPMENT ARCHITECTURE
+--------------------------------------------------------------------------------
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        DEVELOPMENT ENVIRONMENT                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   Browser (localhost:3000)                                               │
+│        │                                                                 │
+│        │ HTTP requests to /api/*                                         │
+│        ▼                                                                 │
+│   ┌────────────────────────────┐                                        │
+│   │   Vite Dev Server          │                                        │
+│   │   (localhost:3000)         │                                        │
+│   │                            │                                        │
+│   │   - Serves React app       │                                        │
+│   │   - Hot Module Replacement │                                        │
+│   │   - Proxies /api/* → 3001  │                                        │
+│   └────────────┬───────────────┘                                        │
+│                │                                                         │
+│                │ Proxy (vite.config.ts)                                  │
+│                ▼                                                         │
+│   ┌────────────────────────────┐                                        │
+│   │   Express API Server       │                                        │
+│   │   (localhost:3001)         │                                        │
+│   │                            │                                        │
+│   │   - Handles /api/* routes  │                                        │
+│   │   - Connects to databases  │                                        │
+│   └────────────┬───────────────┘                                        │
+│                │                                                         │
+│                ├──────────────────────┐                                  │
+│                │                      │                                  │
+│                ▼                      ▼                                  │
+│   ┌──────────────────┐    ┌──────────────────┐                         │
+│   │   MySQL 8        │    │   MongoDB 7      │                         │
+│   │   (localhost:    │    │   (localhost:    │                         │
+│   │    3307)         │    │    27017)        │                         │
+│   └──────────────────┘    └──────────────────┘                         │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+KEY CONFIGURATION (vite.config.ts):
+```typescript
+server: {
+  port: 3000,
+  proxy: {
+    "/api": {
+      target: "http://localhost:3001",
+      changeOrigin: true,
+    },
+  },
+}
+```
+
+--------------------------------------------------------------------------------
+7.2 PRODUCTION ARCHITECTURE
+--------------------------------------------------------------------------------
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        PRODUCTION ENVIRONMENT                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   Browser                                                                │
+│        │                                                                 │
+│        │ HTTP requests to domain:3000                                    │
+│        ▼                                                                 │
+│   ┌────────────────────────────────────────────┐                        │
+│   │   Express Server (NODE_ENV=production)     │                        │
+│   │   (port 3000)                              │                        │
+│   │                                            │                        │
+│   │   - Serves static files from dist/public   │                        │
+│   │   - Handles /api/* routes                  │                        │
+│   │   - SPA fallback to index.html             │                        │
+│   └────────────┬───────────────────────────────┘                        │
+│                │                                                         │
+│                ├──────────────────────┐                                  │
+│                │                      │                                  │
+│                ▼                      ▼                                  │
+│   ┌──────────────────┐    ┌──────────────────┐                         │
+│   │   MySQL 8        │    │   MongoDB 7      │                         │
+│   │   (Container)    │    │   (Container)    │                         │
+│   └──────────────────┘    └──────────────────┘                         │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+KEY CONFIGURATION (server/index.ts):
+```typescript
+if (process.env.NODE_ENV === "production") {
+  const staticPath = path.resolve(__dirname, "public");
+  app.use(express.static(staticPath));
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(staticPath, "index.html"));
+  });
+}
+```
+
+--------------------------------------------------------------------------------
+7.3 API COMMUNICATION PATTERN
+--------------------------------------------------------------------------------
+
+REQUEST FORMAT:
+```http
+POST /api/auth/login HTTP/1.1
+Host: localhost:3000
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "password": "Secret123!"
+}
+```
+
+RESPONSE FORMAT (Success):
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "username": "johndoe",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com"
+  },
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+RESPONSE FORMAT (Error):
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "error": "Invalid credentials"
+}
+```
+
+AUTHENTICATED REQUEST:
+```http
+GET /api/accounts HTTP/1.1
+Host: localhost:3000
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+--------------------------------------------------------------------------------
+7.4 FRONTEND API INTEGRATION
+--------------------------------------------------------------------------------
+
+LOCATION: client/src/contexts/AuthContext.tsx
+
+LOGIN IMPLEMENTATION:
+```typescript
+const login = async (username: string, password: string, remember: boolean) => {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: username.trim(), password }),
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(json.error ?? "Login failed");
+  }
+
+  const user = json.user;
+  const storage = remember ? localStorage : sessionStorage;
+  storage.setItem("banking_session", JSON.stringify(user));
+  setUser(user);
+};
+```
+
+REGISTER IMPLEMENTATION:
+```typescript
+const register = async (input: RegisterInput) => {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(json.error ?? "Registration failed");
+  }
+
+  // Auto-login after registration
+  sessionStorage.setItem("banking_session", JSON.stringify(json.user));
+  setUser(json.user);
+};
+```
+
+SESSION PERSISTENCE:
+- Session stored in sessionStorage by default
+- If "remember me" checked, stored in localStorage
+- Session rehydrated on page load via useEffect
+- Token included in localStorage for authenticated requests
+
+================================================================================
+                        8. SECURITY IMPLEMENTATION
+================================================================================
+
+--------------------------------------------------------------------------------
+8.1 AUTHENTICATION SECURITY
+--------------------------------------------------------------------------------
+
+PASSWORD STORAGE:
+- bcrypt hashing with 12 rounds
+- Salt automatically generated per password
+- Only hash stored in database
+
+JWT SECURITY:
+- HS256 signing algorithm
+- Minimum 32-character secret required
+- 7-day token expiry
+- Token contains: user ID, username, email
+- Token NOT stored in database (stateless)
+
+PROTECTION AGAINST ATTACKS:
+- Timing attacks: Constant-time password comparison
+- Brute force: Rate limiting on auth endpoints (5/15min)
+- Token theft: HTTPS only in production
+
+--------------------------------------------------------------------------------
+8.2 RATE LIMITING
+--------------------------------------------------------------------------------
+
+IMPLEMENTATION: express-rate-limit
+
+LIMITS:
+┌────────────────────────────────────────────────────────────────────────┐
+│ Endpoint Type       │ Limit              │ Window                      │
+├────────────────────────────────────────────────────────────────────────┤
+│ Auth (login,        │ 5 requests         │ 15 minutes                  │
+│ register,           │                    │                             │
+│ forgot-password)    │                    │                             │
+├────────────────────────────────────────────────────────────────────────┤
+│ Transfer            │ 10 requests        │ 15 minutes                  │
+├────────────────────────────────────────────────────────────────────────┤
+│ General API         │ 100 requests       │ 15 minutes                  │
+└────────────────────────────────────────────────────────────────────────┘
+
+--------------------------------------------------------------------------------
+8.3 INPUT VALIDATION
+--------------------------------------------------------------------------------
+
+FRAMEWORK: Zod schemas
+
+VALIDATION LAYERS:
+1. Client-side: Form validation before submit
+2. Server-side: Zod middleware BEFORE route handler
+3. Database: Foreign key constraints, ENUM types
+
+VALIDATION EXAMPLES:
+
+PASSWORD REQUIREMENTS:
+- Minimum 8 characters
+- Maximum 128 characters
+- At least one uppercase letter
+- At least one number
+- At least one special character
+
+USERNAME REQUIREMENTS:
+- 4-30 characters
+- Letters, numbers, dots, underscores, hyphens only
+
+AMOUNT FORMAT:
+- Decimal with up to 4 decimal places
+- Must be > 0 for transfers
+
+CURRENCY:
+- 3-letter ISO 4217 code (uppercase)
+
+--------------------------------------------------------------------------------
+8.4 TRANSACTION SECURITY
+--------------------------------------------------------------------------------
+
+ATOMIC TRANSFERS:
+- All balance updates within database transaction
+- Rollback on any failure
+- No partial state possible
+
+OPTIMISTIC LOCKING:
+- version_id prevents lost updates
+- Concurrent transfer detection
+- Automatic retry guidance on conflict
+
+ROW-LEVEL LOCKING:
+- SELECT ... FOR UPDATE during transfers
+- Prevents concurrent balance reads/writes
+- Ensures consistency
+
+SELF-TRANSFER PREVENTION:
+- Checks sender_account_id ≠ receiver_account_id
+- Returns 400 error if attempted
+
+--------------------------------------------------------------------------------
+8.5 DATA PROTECTION
+--------------------------------------------------------------------------------
+
+UUID STORAGE:
+- UUIDs stored as BINARY(16) for compact storage
+- Converted to string format for API responses
+- Prevents enumeration attacks vs sequential IDs
+
+MONETARY PRECISION:
+- DECIMAL(15,4) for all amounts
+- No floating-point arithmetic
+- Avoids rounding errors
+
+APPEND-ONLY TRANSACTIONS:
+- ORM hooks prevent UPDATE/DELETE
+- Immutable audit trail
+- Status transitions via service only
+
+================================================================================
+                           9. API ENDPOINTS
+================================================================================
+
+BASE URL: /api
+
+--------------------------------------------------------------------------------
+9.1 AUTHENTICATION ENDPOINTS
+--------------------------------------------------------------------------------
+
+POST /api/auth/register
+  PURPOSE: Create new user account
+  AUTH: None (public)
+  BODY: {
+    firstName: string,
+    lastName: string,
+    email: string,
+    username: string,
+    password: string,
+    dateOfBirth?: string
+  }
+  RESPONSE: {
+    user: { id, username, firstName, lastName, email },
+    accessToken: string
+  }
+
+POST /api/auth/login
+  PURPOSE: Authenticate user
+  AUTH: None (public)
+  BODY: { username: string, password: string }
+  RESPONSE: {
+    user: { id, username, firstName, lastName, email },
+    accessToken: string
+  }
+
+POST /api/auth/forgot-password
+  PURPOSE: Request password reset
+  AUTH: None (public)
+  BODY: { email: string }
+  RESPONSE: { message: "If the email exists, a reset link has been sent" }
+
+POST /api/auth/reset-password
+  PURPOSE: Reset password with token
+  AUTH: None (public)
+  BODY: { token: string, password: string }
+  RESPONSE: { message: "Password reset successfully" }
+
+GET /api/auth/me
+  PURPOSE: Get current user profile
+  AUTH: Required (JWT)
+  RESPONSE: { id, username, firstName, lastName, email }
+
+--------------------------------------------------------------------------------
+9.2 ACCOUNT ENDPOINTS
+--------------------------------------------------------------------------------
+
+POST /api/accounts
+  PURPOSE: Create new account
+  AUTH: Required
+  BODY: {
+    currency: string (3-letter code),
+    accountNumber?: string,
+    initialBalance?: string
+  }
+  RESPONSE: { account }
+
+GET /api/accounts
+  PURPOSE: List user's accounts
+  AUTH: Required
+  RESPONSE: { accounts: [...] }
+
+GET /api/accounts/:id
+  PURPOSE: Get account details
+  AUTH: Required (own account)
+  RESPONSE: { account }
+
+GET /api/accounts/:id/balance
+  PURPOSE: Get account balance
+  AUTH: Required (own account)
+  RESPONSE: { balance: string, currency: string }
+
+--------------------------------------------------------------------------------
+9.3 TRANSACTION ENDPOINTS
+--------------------------------------------------------------------------------
+
+POST /api/transactions/transfer
+  PURPOSE: Execute fund transfer
+  AUTH: Required
+  RATE LIMIT: 10/15min
+  BODY: {
+    receiverAccountNumber: string,
+    amount: string,
+    currency: string,
+    reference?: string,
+    beneficiaryId?: string,
+    note?: string
+  }
+  RESPONSE: {
+    message: "Transfer completed successfully",
+    transaction: {
+      transactionId, status, amount, currency,
+      senderAccountNumber, receiverAccountNumber,
+      referenceId, createdAt
+    }
+  }
+
+GET /api/transactions
+  PURPOSE: Get transaction history
+  AUTH: Required
+  QUERY: {
+    page?: number,
+    limit?: number,
+    type?: 'internal'|'wire'|'billpay',
+    status?: 'pending'|'completed'|'failed'|'reversed',
+    startDate?: string,
+    endDate?: string,
+    minAmount?: string,
+    maxAmount?: string
+  }
+  RESPONSE: {
+    transactions: [...],
+    pagination: { page, limit, total, totalPages }
+  }
+
+--------------------------------------------------------------------------------
+9.4 BENEFICIARY ENDPOINTS
+--------------------------------------------------------------------------------
+
+POST /api/beneficiaries
+  PURPOSE: Add beneficiary
+  AUTH: Required
+  BODY: {
+    name: string,
+    accountNumber: string,
+    bankName?: string,
+    bankCode?: string,
+    currency?: string,
+    nickname?: string,
+    isFavorite?: boolean
+  }
+  RESPONSE: { beneficiary }
+
+GET /api/beneficiaries
+  PURPOSE: List beneficiaries
+  AUTH: Required
+  RESPONSE: { beneficiaries: [...] }
+
+GET /api/beneficiaries/:id
+  PURPOSE: Get beneficiary details
+  AUTH: Required
+  RESPONSE: { beneficiary }
+
+PUT /api/beneficiaries/:id
+  PURPOSE: Update beneficiary
+  AUTH: Required
+  BODY: {
+    name?: string,
+    bankName?: string,
+    bankCode?: string,
+    nickname?: string,
+    isFavorite?: boolean
+  }
+  RESPONSE: { beneficiary }
+
+DELETE /api/beneficiaries/:id
+  PURPOSE: Delete beneficiary
+  AUTH: Required
+  RESPONSE: { message: "Beneficiary deleted" }
+
+--------------------------------------------------------------------------------
+9.5 NOTIFICATION ENDPOINTS
+--------------------------------------------------------------------------------
+
+GET /api/notifications
+  PURPOSE: List notifications
+  AUTH: Required
+  QUERY: {
+    page?: number,
+    limit?: number,
+    unreadOnly?: boolean,
+    type?: 'transaction'|'security'|'system'|'promo'
+  }
+  RESPONSE: { notifications: [...], pagination }
+
+POST /api/notifications/:id/read
+  PURPOSE: Mark notification as read
+  AUTH: Required
+  RESPONSE: { notification }
+
+POST /api/notifications/read-all
+  PURPOSE: Mark all as read
+  AUTH: Required
+  RESPONSE: { modifiedCount: number }
+
+DELETE /api/notifications/:id
+  PURPOSE: Delete notification
+  AUTH: Required
+  RESPONSE: { message: "Notification deleted" }
+
+--------------------------------------------------------------------------------
+9.6 SEARCH ENDPOINT
+--------------------------------------------------------------------------------
+
+GET /api/search
+  PURPOSE: Search transactions and activity
+  AUTH: Required
+  QUERY: {
+    q: string (search query),
+    type?: 'transactions'|'activity'|'all',
+    limit?: number,
+    threshold?: number (0-1)
+  }
+  RESPONSE: {
+    results: [
+      {
+        type: 'transaction'|'activity'|'notification',
+        id: string,
+        title: string,
+        description: string,
+        score: number,
+        data: {...},
+        createdAt: date
+      }
+    ]
+  }
+
+--------------------------------------------------------------------------------
+9.7 HEALTH CHECK
+--------------------------------------------------------------------------------
+
+GET /api/health
+  PURPOSE: Check server status
+  AUTH: None (public)
+  RESPONSE: {
+    status: "ok",
+    timestamp: string,
+    version: "1.0.0"
+  }
+
+GET /api/docs
+  PURPOSE: Swagger UI documentation
+  AUTH: None (public)
+
+================================================================================
+                      10. LIBRARIES AND DEPENDENCIES
+================================================================================
+
+--------------------------------------------------------------------------------
+10.1 PRODUCTION DEPENDENCIES
+--------------------------------------------------------------------------------
+
+AUTHENTICATION & SECURITY:
+- bcryptjs 3.0.3           - Password hashing
+- jsonwebtoken 9.0.3       - JWT tokens
+
+BACKEND FRAMEWORK:
+- express 4.21.2           - Web server
+
+DATABASE:
+- mysql2 3.24.4            - MySQL driver
+- sequelize 6.37.8         - MySQL ORM
+- mongoose 9.10.1          - MongoDB ODM
+
+VALIDATION:
+- zod 4.1.12               - Schema validation
+
+UTILITIES:
+- dotenv 18.0.1            - Environment variables
+- uuid 14.0.2              - UUID generation
+- nanoid 5.1.5             - Unique IDs
+- decimal.js 10.6.0        - Decimal arithmetic
+
+EMAIL:
+- nodemailer 10.0.10       - Email sending
+
+API DOCUMENTATION:
+- swagger-jsdoc 6.3.0      - Swagger from JSDoc
+- swagger-ui-express 5.0.1 - Swagger UI
+
+RATE LIMITING:
+- express-rate-limit 8.7.0 - Request rate limiting
+
+FRONTEND CORE:
+- react 19.2.1             - UI library
+- react-dom 19.2.1         - React DOM
+
+HTTP CLIENT:
+- axios 1.12.0             - HTTP requests
+
+ROUTING:
+- wouter 3.3.5             - React router
+
+STATE MANAGEMENT:
+- (React Context API - built-in)
+
+FORM HANDLING:
+- react-hook-form 7.64.0   - Form management
+- @hookform/resolvers 5.2.2 - Zod integration
+
+UI COMPONENTS (Radix UI):
+- @radix-ui/react-accordion 1.2.12
+- @radix-ui/react-alert-dialog 1.1.15
+- @radix-ui/react-avatar 1.1.10
+- @radix-ui/react-checkbox 1.3.3
+- @radix-ui/react-dialog 1.1.15
+- @radix-ui/react-dropdown-menu 2.1.16
+- @radix-ui/react-label 2.1.7
+- @radix-ui/react-popover 1.1.15
+- @radix-ui/react-progress 1.1.7
+- @radix-ui/react-scroll-area 1.2.10
+- @radix-ui/react-select 2.2.6
+- @radix-ui/react-separator 1.1.7
+- @radix-ui/react-slider 1.3.6
+- @radix-ui/react-slot 1.2.3
+- @radix-ui/react-switch 1.2.6
+- @radix-ui/react-tabs 1.1.13
+- @radix-ui/react-tooltip 1.2.8
+
+VISUALIZATION:
+- recharts 2.15.2          - Charts
+- framer-motion 12.23.22   - Animations
+
+ICONS:
+- lucide-react 0.453.0     - Icon library
+
+STYLING:
+- tailwind-merge 3.3.1     - Merge Tailwind classes
+- class-variance-authority 0.7.1 - Component variants
+- clsx 2.1.1               - Conditional classes
+
+THEMING:
+- next-themes 0.4.6        - Theme management
+
+NOTIFICATIONS:
+- sonner 2.0.7             - Toast notifications
+
+MISC UI:
+- cmdk 1.1.1               - Command palette
+- embla-carousel-react 8.6.0 - Carousel
+- input-otp 1.4.2          - OTP input
+- react-day-picker 9.11.1  - Date picker
+- react-resizable-panels 3.0.6 - Resizable panels
+- vaul 1.1.2               - Drawer
+
+--------------------------------------------------------------------------------
+10.2 DEVELOPMENT DEPENDENCIES
+--------------------------------------------------------------------------------
+
+BUILD TOOLS:
+- vite 7.1.7               - Build tool
+- esbuild 0.25.0           - Production bundler
+- typescript 5.6.3         - TypeScript compiler
+
+TYPE DEFINITIONS:
+- @types/express 4.17.21
+- @types/node 24.7.0
+- @types/react 19.2.1
+- @types/react-dom 19.2.1
+- @types/bcryptjs 3.0.0
+- @types/jsonwebtoken 9.0.10
+- @types/nodemailer 8.0.1
+- @types/uuid 10.0.0
+
+PLUGINS:
+- @vitejs/plugin-react 5.0.4
+- @tailwindcss/vite 4.1.3
+- @tailwindcss/typography 0.5.15
+
+TESTING:
+- vitest 2.1.4             - Test runner
+- fast-check 3.23.2        - Property-based testing
+
+DEVELOPMENT UTILITIES:
+- tsx 4.19.1               - TypeScript execution
+- concurrently 10.0.5      - Run multiple commands
+- prettier 3.6.2           - Code formatter
+
+CSS:
+- tailwindcss 4.1.14       - CSS framework
+- postcss 8.4.47           - CSS processor
+- autoprefixer 10.4.20     - CSS vendor prefixes
+
+================================================================================
+                              END OF DOCUMENT
+================================================================================
+
+This document provides a comprehensive overview of the NexusPay banking system,
+including all implemented features, algorithms, database schemas, API endpoints,
+and the connection between frontend and backend components.
+
+For the most up-to-date API documentation, run the server and visit:
+http://localhost:3000/api/docs
+
+================================================================================

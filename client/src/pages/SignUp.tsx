@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,7 +19,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 /* ── Validation schemas ─────────────────────────────────────── */
 const step1Schema = z.object({
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
   accountNumber: z
     .string()
     .min(8, "Account number must be at least 8 digits")
@@ -28,11 +28,10 @@ const step1Schema = z.object({
   dateOfBirth: z
     .string()
     .min(1, "Date of birth is required")
-    .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Use MM/DD/YYYY format"),
+    .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Use DD/MM/YYYY format"),
 });
 
 const step2Schema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
   email: z.string().email("Enter a valid email address"),
   username: z
     .string()
@@ -133,11 +132,11 @@ export default function SignUp() {
   /* ── Step forms ── */
   const form1 = useForm<Step1Values>({
     resolver: zodResolver(step1Schema),
-    defaultValues: { lastName: "", accountNumber: "", dateOfBirth: "" },
+    defaultValues: { fullName: "", accountNumber: "", dateOfBirth: "" },
   });
   const form2 = useForm<Step2Values>({
     resolver: zodResolver(step2Schema),
-    defaultValues: { firstName: "", email: "", username: "" },
+    defaultValues: { email: "", username: "" },
   });
   const form3 = useForm<Step3Values>({
     resolver: zodResolver(step3Schema),
@@ -146,7 +145,7 @@ export default function SignUp() {
 
   const passwordWatch = form3.watch("password") ?? "";
 
-  /* ── DOB auto-format ── */
+  /* ── DOB auto-format (DD/MM/YYYY) ── */
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let v = e.target.value.replace(/\D/g, "");
     if (v.length > 2) v = v.slice(0, 2) + "/" + v.slice(2);
@@ -168,9 +167,14 @@ export default function SignUp() {
     setServerError(null);
     clearError();
     try {
+      // Split fullName into firstName and lastName for backend compatibility
+      const nameParts = collectedData.fullName!.trim().split(/\s+/);
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ") || "";
+
       await registerUser({
-        firstName: collectedData.firstName!,
-        lastName: collectedData.lastName!,
+        firstName,
+        lastName,
         email: collectedData.email!,
         username: collectedData.username!,
         password: data.password,
@@ -208,7 +212,7 @@ export default function SignUp() {
                 Account created!
               </h1>
               <p className="signup-success-msg">
-                Welcome, {collectedData.firstName}! Your account is ready. Taking
+                Welcome, {collectedData.fullName?.split(" ")[0]}! Your account is ready. Taking
                 you to your dashboard…
               </p>
               <button
@@ -257,14 +261,14 @@ export default function SignUp() {
               <p className="signup-section-label">Enter your personal information</p>
 
               <div className="auth-field">
-                <label htmlFor="su-lastName" className="auth-label">Last Name</label>
-                <div className={`auth-input-wrap${form1.formState.errors.lastName ? " auth-input-wrap--error" : ""}`}>
+                <label htmlFor="su-fullName" className="auth-label">Full Name</label>
+                <div className={`auth-input-wrap${form1.formState.errors.fullName ? " auth-input-wrap--error" : ""}`}>
                   <User size={14} className="auth-input-icon" aria-hidden="true" />
-                  <input id="su-lastName" type="text" autoComplete="family-name"
-                    className="auth-input" {...form1.register("lastName")} />
+                  <input id="su-fullName" type="text" autoComplete="name"
+                    className="auth-input" {...form1.register("fullName")} />
                 </div>
-                {form1.formState.errors.lastName && (
-                  <p className="auth-field-error">{form1.formState.errors.lastName.message}</p>
+                {form1.formState.errors.fullName && (
+                  <p className="auth-field-error">{form1.formState.errors.fullName.message}</p>
                 )}
               </div>
 
@@ -292,7 +296,7 @@ export default function SignUp() {
                 <div className={`auth-input-wrap${form1.formState.errors.dateOfBirth ? " auth-input-wrap--error" : ""}`}>
                   <CalendarDays size={14} className="auth-input-icon" aria-hidden="true" />
                   <input id="su-dob" type="text" inputMode="numeric" autoComplete="bday"
-                    placeholder="mm / dd / yyyy" className="auth-input"
+                    placeholder="dd / mm / yyyy" className="auth-input"
                     value={form1.watch("dateOfBirth")} onChange={handleDobChange} />
                 </div>
                 {form1.formState.errors.dateOfBirth && (
@@ -313,18 +317,6 @@ export default function SignUp() {
           {step === 2 && (
             <form onSubmit={onStep2} noValidate>
               <p className="signup-section-label">Create your account credentials</p>
-
-              <div className="auth-field">
-                <label htmlFor="su-firstName" className="auth-label">First Name</label>
-                <div className={`auth-input-wrap${form2.formState.errors.firstName ? " auth-input-wrap--error" : ""}`}>
-                  <User size={14} className="auth-input-icon" aria-hidden="true" />
-                  <input id="su-firstName" type="text" autoComplete="given-name"
-                    className="auth-input" {...form2.register("firstName")} />
-                </div>
-                {form2.formState.errors.firstName && (
-                  <p className="auth-field-error">{form2.formState.errors.firstName.message}</p>
-                )}
-              </div>
 
               <div className="auth-field">
                 <label htmlFor="su-email" className="auth-label">Email Address</label>

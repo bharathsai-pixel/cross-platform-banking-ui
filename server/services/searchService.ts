@@ -128,7 +128,7 @@ async function searchTransactions(
   threshold: number
 ): Promise<SearchResult[]> {
   // Get user's account IDs
-  const accountRows = await sequelize.query<Array<{ id: Buffer }>>(
+  const accountRows = await sequelize.query<{ id: Buffer }>(
     `SELECT id FROM accounts WHERE user_id = UUID_TO_BIN(?)`,
     { replacements: [userId], type: QueryTypes.SELECT }
   );

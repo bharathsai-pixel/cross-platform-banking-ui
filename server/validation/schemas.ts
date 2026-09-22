@@ -17,7 +17,7 @@ import { z } from "zod";
 
 export const registerSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(100),
-  lastName: z.string().trim().min(1, "Last name is required").max(100),
+  lastName: z.string().trim().max(100).optional(), // Optional - can be derived from fullName
   email: z.string().trim().email("Invalid email address").max(320),
   username: z
     .string()
@@ -171,7 +171,7 @@ export const notificationQuerySchema = z.object({
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Request, Response, NextFunction } from "express";
-import { z, ZodError } from "zod";
+import { ZodError } from "zod";
 
 /**
  * Create an Express middleware that validates req.body against a Zod schema.
